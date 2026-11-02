@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Phishing Email Detection Model</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <div class="wrapper">
+    <header>
+      <h1>🎣 Phishing Email Detection Model</h1>
+      <p class="subtitle">Paste an email's text below to classify it as Phishing or Safe using a Scikit-learn model.</p>
+    </header>
+
+    <main class="card">
+      <div class="field">
+        <label for="emailText">Email Text (subject + body)</label>
+        <textarea id="emailText" rows="8" placeholder="Subject: ...&#10;From: ...&#10;&#10;Body text here..."></textarea>
+      </div>
+
+      <div class="actions">
+        <button id="classifyBtn" class="primary-btn">Classify Email</button>
+        <button id="sampleBtn" class="secondary-btn">Load Phishing Sample</button>
+        <button id="sampleSafeBtn" class="secondary-btn">Load Safe Sample</button>
+      </div>
+
+      <div id="resultBox" class="result-box" style="display:none;"></div>
+    </main>
+
+    <section class="card metrics-card">
+      <h2>Model Performance</h2>
+      {% if metrics %}
+      <div class="summary-grid">
+        <div class="summary-item"><div class="value">{{ (metrics.accuracy * 100) | round(2) }}%</div><div class="label">Accuracy</div></div>
+        <div class="summary-item"><div class="value">{{ (metrics.precision * 100) | round(2) }}%</div><div class="label">Precision</div></div>
+        <div class="summary-item"><div class="value">{{ (metrics.recall * 100) | round(2) }}%</div><div class="label">Recall</div></div>
+        <div class="summary-item"><div class="value">{{ (metrics.f1_score * 100) | round(2) }}%</div><div class="label">F1 Score</div></div>
+      </div>
+      <p class="muted">Evaluated on a held-out test set of {{ metrics.test_size }} emails (trained on {{ metrics.train_size }}).</p>
+      <h3>Confusion Matrix</h3>
+      <img class="cm-image" src="{{ url_for('static', filename='confusion_matrix.png') }}" alt="Confusion Matrix" />
+      {% else %}
+      <p class="muted">No trained model metrics found yet. Run <code>python generate_dataset.py</code> then <code>python train_model.py</code>, then restart the app.</p>
+      {% endif %}
+    </section>
+
+    <footer>
+      <p>Educational project — trained on a synthetically generated dataset of phishing/legitimate email templates.</p>
+    </footer>
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
